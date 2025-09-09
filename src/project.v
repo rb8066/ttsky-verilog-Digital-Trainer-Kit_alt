@@ -1,5 +1,4 @@
 `default_nettype none
-`timescale 1ns / 1ps
 
 // Digital Logic Trainer Kit for TinyTapeout
 // Author: Remya Babu
@@ -16,8 +15,8 @@ module tt_um_remya_digital_trainer (
 );
 
     // Map TinyTapeout IOs to internal signals
-    wire a         = ui_in[0];
-    wire b         = ui_in[1];
+    wire a        = ui_in[0];
+    wire b        = ui_in[1];
     wire [2:0] sel = ui_in[4:2];
     reg  y;
 
