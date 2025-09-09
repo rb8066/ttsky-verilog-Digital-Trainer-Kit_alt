@@ -33,7 +33,7 @@ async def test_project(dut):
 
     # Reset + init
     dut.rst_n.value = 0
-    dut.ena.value = 1
+    dut.user_project.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     await ClockCycles(dut.clk, 2)
