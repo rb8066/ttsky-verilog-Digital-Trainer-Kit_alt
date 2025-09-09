@@ -14,7 +14,7 @@ module tb ();
     reg        ena;
 
     // DUT instance
-    tt_um_remya_digital_trainer dut (
+    tt_um_remya_digital_trainer user_project (
         .ui_in(ui_in),
         .uo_out(uo_out),
         .uio_in(uio_in),
