@@ -1,27 +1,46 @@
-/*
- * Copyright (c) 2024 Your Name
- * SPDX-License-Identifier: Apache-2.0
- */
-
 `default_nettype none
+`timescale 1ns / 1ps
 
-module tt_um_example (
-    input  wire [7:0] ui_in,    // Dedicated inputs
-    output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
-    output wire [7:0] uio_out,  // IOs: Output path
-    output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-    input  wire       ena,      // always 1 when the design is powered, so you can ignore it
-    input  wire       clk,      // clock
-    input  wire       rst_n     // reset_n - low to reset
+// Digital Logic Trainer Kit for TinyTapeout
+// Author: Remya Babu
+
+module tt_um_remya_digital_trainer (
+    input  wire [7:0] ui_in,    // inputs
+    output wire [7:0] uo_out,   // outputs
+    input  wire [7:0] uio_in,   // bidirectional (unused here)
+    output wire [7:0] uio_out,
+    output wire [7:0] uio_oe,
+    input  wire       ena,      // enable signal from TinyTapeout
+    input  wire       clk,      // global clock (unused here)
+    input  wire       rst_n     // global reset (unused here)
 );
 
-  // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
-  assign uio_out = 0;
-  assign uio_oe  = 0;
+    // Map TinyTapeout IOs to internal signals
+    wire a         = ui_in[0];
+    wire b         = ui_in[1];
+    wire [2:0] sel = ui_in[4:2];
+    reg  y;
 
-  // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
+    // Assign outputs
+    assign uo_out[0] = ena ? y : 1'b0;  // only drive when ena=1
+    assign uo_out[7:1] = 7'b0;          // unused outputs tied low
+
+    // Unused bidirectional pins must be disabled
+    assign uio_out = 8'b0;
+    assign uio_oe  = 8'b0;
+
+    // Combinational logic for digital gates
+    always @(*) begin
+        case (sel)
+            3'b000: y = a & b;        // AND
+            3'b001: y = a | b;        // OR
+            3'b010: y = ~a;           // NOT (ignores b)
+            3'b011: y = ~(a & b);     // NAND
+            3'b100: y = ~(a | b);     // NOR
+            3'b101: y = a ^ b;        // XOR
+            3'b110: y = ~(a ^ b);     // XNOR
+            default: y = 1'b0;        // default safe
+        endcase
+    end
 
 endmodule
